@@ -46,6 +46,25 @@ const deleteEmp = async (req, res) => {
     res.json(`Empleado ${id} borrado`);
 };
 
+// edit employee by id
+const editEmp = async (req, res) => {
+    try {
+        // peticion asincrona
+        const { nombre, apellido1, apellido2, direccion, telefono, email, nivel, id } = req.body;
+        const response = await pool.query('UPDATE asesores SET nombre = $1, apellido1 = $2, apellido2 = $3, direccion = $4, telefono = $5 , email = $6 , nivel = $7 WHERE id_asesor = $8', [nombre, apellido1, apellido2, direccion, telefono, email, nivel ,id]);
+        res.json({
+            message: 'Employee Created',
+            body: {
+                user: { nombre, apellido1, apellido2, direccion, telefono, email, nivel, id }
+            }
+        });
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json('Internal Server error');
+    }
+};
+
 // get all sales
 const getSales = async (req, res) => {
     const response = await pool.query('SELECT * FROM ventas');
@@ -88,12 +107,12 @@ const getEmpSalesSUM = async (req, res) => {
 const createPay = async (req, res) => {
     try {
         // peticion asincrona
-        const { salud, pension, riesgos, comision, total, asesor} = req.body;
-        const response = await pool.query('INSERT INTO ventas(salud, pension, riesgos, comision, total, asesor, fecha_pago) values($1, $2, $4, $5, $6, CURRENT_TIMESTAMP)', [salud, pension, riesgos, comision, total, asesor]);
+        const {comision, total, asesor} = req.body;
+        const response = await pool.query('INSERT INTO ventas(comision, total, asesor, fecha_pago) values($1, $2, $3, CURRENT_TIMESTAMP)', [comision, total, asesor]);
         res.json({
             message: 'Check',
             body: {
-                user: { salud, pension, riesgos, comision, total, asesor }
+                user: {comision, total, asesor }
             }
         });
     }
@@ -112,8 +131,8 @@ const getPayments = async (req, res) => {
 
 // get payments by Employee
 const getPaymentsById = async (req, res) => {
-    const response = await pool.query('SELECT * FROM pagos');
-    res.status(200).json(response.rows);
+    const id = parseInt(req.params.id);
+    const response = await pool.query('SELECT * FROM pagos where id_asesor = $1', [id]);
 };
 
 
@@ -126,9 +145,12 @@ module.exports = {
     getEmpById,
     createEmp,
     deleteEmp,
+    editEmp,
     getSales,
     createSale,
     getSalesSUM,
     getEmpSalesSUM,
-    getPayments
+    createPay,
+    getPayments,
+    getPaymentsById
 };
