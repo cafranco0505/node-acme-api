@@ -16,7 +16,7 @@ router.put('/api/employees', editEmp);
 // peticiones ventas
 router.get('/api/sales', getSales);
 router.post('/api/sales', createSale);
-router.get('/api/sales', getSalesSUM);
+router.get('/api/sales/total', getSalesSUM);
 router.get('/api/sales/:id', getEmpSalesSUM);
 // peticiones pagos
 router.post('/api/pay', createPay);

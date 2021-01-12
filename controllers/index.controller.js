@@ -16,8 +16,8 @@ const getEmp = async (req, res) => {
 // get employee by id
 const getEmpById = async (req, res) => {
     const id = parseInt(req.params.id);
-    await pool.query('SELECT * FROM asesores where id_asesor = $1', [id]);
-    res.json(`Empleado ${id} borrado`);
+    const response = await pool.query('SELECT * FROM asesores INNER JOIN niveles ON asesores.nivel = niveles.id_nivel where id_asesor = $1', [id]);
+    res.status(200).json(response.rows);
 };
 
 // create employee
@@ -99,8 +99,8 @@ const getSalesSUM = async (req, res) => {
 // get employees sales SUM
 const getEmpSalesSUM = async (req, res) => {
     const id = parseInt(req.params.id);
-    await pool.query('SELECT SUM(valor), asesor FROM ventas GROUP BY asesor HAVING asesor = $1', [id]);
-    res.json(`Empleado ${id} borrado`);
+    const response = await pool.query('SELECT SUM(valor) FROM ventas GROUP BY asesor HAVING asesor = $1', [id]);
+    res.status(200).json(response.rows);
 };
 
 // create pay
@@ -133,6 +133,7 @@ const getPayments = async (req, res) => {
 const getPaymentsById = async (req, res) => {
     const id = parseInt(req.params.id);
     const response = await pool.query('SELECT * FROM pagos where id_asesor = $1', [id]);
+    res.status(200).json(response.rows);
 };
 
 
